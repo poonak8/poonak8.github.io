@@ -6,54 +6,54 @@
     <title>مدیریت ساختمان پونک ۸</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* استایل‌های پایه برای جلوگیری از به هم ریختگی */
-        body { font-family: Tahoma, sans-serif; background: #f8fafc; padding: 20px; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        :root { --primary: #2563eb; --bg-main: #f8fafc; }
+        body { background-color: var(--bg-main); font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { width: 100%; max-width: 400px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .form-group { margin-bottom: 15px; }
-        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>ورود به سیستم</h2>
         <div class="form-group">
-            <label>نام کاربری:</label>
+            <label>شماره واحد:</label>
             <input type="text" id="user-input" placeholder="مثال: 3">
         </div>
         <div class="form-group">
             <label>رمز عبور:</label>
-            <input type="password" id="pass-input" placeholder="رمز عبور">
+            <input type="password" id="pass-input" placeholder="حداقل ۴ کاراکتر">
         </div>
         <button onclick="login()">ورود</button>
-        <div id="status" style="margin-top: 10px; color: red;"></div>
+        <div id="status" style="margin-top: 15px; text-align: center;"></div>
     </div>
 
     <script>
-        // در خط زیر کلید خود را جایگذاری کنید
         const SUPABASE_URL = "https://virkprhykbvcawaryrvp.supabase.co";
+        // در خط زیر، فقط عبارت داخل کوتیشن را با کلید جدید خود جایگزین کنید:
         const SUPABASE_ANON_KEY = "sb_publishable_V3f8YRCSNQNhH7yrFhaLCA_c-lm6Flj";
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function login() {
             const user = document.getElementById("user-input").value.trim().toLowerCase();
-            const pass = document.getElementById("pass-input").value;
+            const password = document.getElementById("pass-input").value;
             const status = document.getElementById("status");
 
             let email = user === "admin" ? "admin@sakhteman.local" : `unit${user}@sakhteman.local`;
 
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
-                password: pass
+                password: password
             });
 
             if (error) {
-                status.textContent = "خطا در ورود: " + error.message;
+                status.style.color = "red";
+                status.textContent = "خطا در ورود: اطلاعات نادرست است.";
             } else {
-                status.textContent = "ورود موفقیت‌آمیز بود!";
                 status.style.color = "green";
-                // اینجا بعداً کد هدایت به پنل را اضافه می‌کنیم
+                status.textContent = "ورود موفقیت‌آمیز!";
             }
         }
     </script>
