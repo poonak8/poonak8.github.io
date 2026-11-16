@@ -4,48 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مدیریت ساختمان پونک ۸</title>
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --primary: #2563eb; --bg-main: #f8fafc; }
         body { background-color: var(--bg-main); font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .container { width: 100%; max-width: 400px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
         input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #1d4ed8; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>ورود به سیستم</h2>
-        <div class="form-group">
-            <label>شماره واحد:</label>
-            <input type="text" id="user-input" placeholder="مثال: 3">
-        </div>
-        <div class="form-group">
-            <label>رمز عبور:</label>
-            <input type="password" id="pass-input" placeholder="حداقل ۴ کاراکتر">
-        </div>
-        <button onclick="login()">ورود</button>
-        <div id="status" style="margin-top: 15px; text-align: center;"></div>
+
+<div class="container">
+    <h2>ورود به سیستم</h2>
+    <div class="form-group">
+        <label>شماره واحد:</label>
+        <input type="text" id="user-input" placeholder="مثال: 3">
     </div>
+    <div class="form-group">
+        <label>رمز عبور:</label>
+        <input type="password" id="pass-input" placeholder="حداقل ۴ کاراکتر">
+    </div>
+    <button onclick="login()">ورود</button>
+    <div id="status" style="margin-top: 15px; text-align: center;"></div>
+</div>
 
-    <script>
-        const SUPABASE_URL = "https://virkprhykbvcawaryrvp.supabase.co";
-        // در خط زیر، فقط عبارت داخل کوتیشن را با کلید جدید خود جایگزین کنید:
-        const SUPABASE_ANON_KEY = "sb_publishable_V3f8YRCSNQNhH7yrFhaLCA_c-lm6Flj";
+<script>
+    // تنظیمات Supabase
+    const SUPABASE_URL = "https://virkprhykbvcawaryrvp.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_V3f8YRCSNQNhH7yrFhaLCA_c-lm6Flj";
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function login() {
-            const user = document.getElementById("user-input").value.trim().toLowerCase();
-            const password = document.getElementById("pass-input").value;
-            const status = document.getElementById("status");
+    async function login() {
+        const userInput = document.getElementById("user-input").value.trim().toLowerCase();
+        const passInput = document.getElementById("pass-input").value;
+        const status = document.getElementById("status");
 
-            let email = user === "admin" ? "admin@sakhteman.local" : `unit${user}@sakhteman.local`;
+        if (passInput.length < 4) {
+            status.style.color = "red";
+            status.textContent = "رمز عبور باید حداقل ۴ کاراکتر باشد.";
+            return;
+        }
 
+        let email = userInput === "admin" ? "admin@sakhteman.local" : `unit${userInput}@sakhteman.local`;
+
+        try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
-                password: password
+                password: passInput
             });
 
             if (error) {
@@ -54,8 +65,13 @@
             } else {
                 status.style.color = "green";
                 status.textContent = "ورود موفقیت‌آمیز!";
+                // هدایت به پنل در صورت نیاز
             }
+        } catch (e) {
+            console.error("Login error:", e);
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
